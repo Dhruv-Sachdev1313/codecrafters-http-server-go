@@ -6,7 +6,6 @@ import (
 	"net"
 	"os"
 	"strings"
-	"time"
 )
 
 func returnResponse(conn net.Conn, message string) {
@@ -17,13 +16,8 @@ func returnResponse(conn net.Conn, message string) {
 	}
 }
 
-func handleTCPRequest(l net.Listener) {
-	conn, err := l.Accept()
+func handleTCPRequest(conn net.Conn) {
 	defer conn.Close()
-	if err != nil {
-		fmt.Println("Error accepting connection: ", err.Error())
-		os.Exit(1)
-	}
 	readBuffer := make([]byte, 1024)
 	int_message, err := bufio.NewReader(conn).Read(readBuffer)
 	if err != nil {
@@ -56,7 +50,7 @@ func handleTCPRequest(l net.Listener) {
 	} else {
 		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
 	}
-	time.Sleep(10 * time.Second)
+
 }
 
 func main() {
@@ -68,6 +62,12 @@ func main() {
 		fmt.Println("Failed to bind to port 4221")
 		os.Exit(1)
 	}
-	go handleTCPRequest(l)
+	conn, err := l.Accept()
+	defer conn.Close()
+	if err != nil {
+		fmt.Println("Error accepting connection: ", err.Error())
+		os.Exit(1)
+	}
+	go handleTCPRequest(conn)
 
 }
