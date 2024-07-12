@@ -37,6 +37,7 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Println("Message received: ", message)
+	fmt.Println(readBuffer)
 
 	// 	path := strings.Split(message, " ")[1]
 	// 	if path == "/" {
