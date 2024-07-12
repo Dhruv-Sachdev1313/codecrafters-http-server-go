@@ -38,8 +38,6 @@ func main() {
 		os.Exit(1)
 	}
 	message := string(readBuffer[:int_message])
-	fmt.Println("Message received: ", message)
-	fmt.Println(readBuffer)
 
 	path := strings.Split(message, " ")[1]
 	if path == "/" {
@@ -56,6 +54,9 @@ func main() {
 			if strings.Contains(header, "User-Agent") {
 				userAgent := strings.Split(header, ": ")[1]
 				response := fmt.Sprint("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(userAgent), userAgent)
+				fmt.Println(response)
+				fmt.Println(userAgent)
+
 				returnResponse(conn, response)
 			}
 		}
