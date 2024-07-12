@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"strings"
+	"time"
 )
 
 func returnResponse(conn net.Conn, message string) {
@@ -55,6 +56,7 @@ func handleTCPRequest(l net.Listener) {
 	} else {
 		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
 	}
+	time.Sleep(1 * time.Second)
 }
 
 func main() {
