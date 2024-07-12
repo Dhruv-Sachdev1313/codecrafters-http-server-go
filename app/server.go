@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"strings"
 )
 
 func returnResponse(conn net.Conn, message string) {
@@ -39,19 +38,19 @@ func main() {
 	}
 	fmt.Println("Message received: ", message)
 
-// 	path := strings.Split(message, " ")[1]
-// 	if path == "/" {
-// 		returnResponse(conn, "HTTP/1.1 200 OK\r\n\r\n")
-// 	} else if (len(path) > 6) && (path[0:6] == "/echo/") {
-// 		str := path[6:]
-// 		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
-// 		fmt.Println(response)
+	// 	path := strings.Split(message, " ")[1]
+	// 	if path == "/" {
+	// 		returnResponse(conn, "HTTP/1.1 200 OK\r\n\r\n")
+	// 	} else if (len(path) > 6) && (path[0:6] == "/echo/") {
+	// 		str := path[6:]
+	// 		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
+	// 		fmt.Println(response)
 
-// 		returnResponse(conn, response)
-// 	} else if path == "/user-agent" {
+	// 		returnResponse(conn, response)
+	// 	} else if path == "/user-agent" {
 
-// 	} else {
-// 		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
-// 	}
+	// 	} else {
+	// 		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
+	// 	}
 
-// }
+}
