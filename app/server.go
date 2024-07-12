@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 )
 
 func returnResponse(conn net.Conn, message string) {
@@ -40,19 +41,26 @@ func main() {
 	fmt.Println("Message received: ", message)
 	fmt.Println(readBuffer)
 
-	// 	path := strings.Split(message, " ")[1]
-	// 	if path == "/" {
-	// 		returnResponse(conn, "HTTP/1.1 200 OK\r\n\r\n")
-	// 	} else if (len(path) > 6) && (path[0:6] == "/echo/") {
-	// 		str := path[6:]
-	// 		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
-	// 		fmt.Println(response)
+	path := strings.Split(message, " ")[1]
+	if path == "/" {
+		returnResponse(conn, "HTTP/1.1 200 OK\r\n\r\n")
+	} else if (len(path) > 6) && (path[0:6] == "/echo/") {
+		str := path[6:]
+		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
+		fmt.Println(response)
 
-	// 		returnResponse(conn, response)
-	// 	} else if path == "/user-agent" {
-
-	// 	} else {
-	// 		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
-	// 	}
+		returnResponse(conn, response)
+	} else if path == "/user-agent" {
+		headersArray := strings.Split(strings.Split(message, "\r\n\r\n")[0], "\r\n")[1:]
+		for _, header := range headersArray {
+			if strings.Contains(header, "User-Agent") {
+				userAgent := strings.Split(header, ": ")[1]
+				response := fmt.Sprint("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(userAgent), userAgent)
+				returnResponse(conn, response)
+			}
+		}
+	} else {
+		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
+	}
 
 }
