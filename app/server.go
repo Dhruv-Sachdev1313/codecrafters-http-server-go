@@ -31,7 +31,7 @@ func main() {
 		fmt.Println("Error accepting connection: ", err.Error())
 		os.Exit(1)
 	}
-	message, err := bufio.NewReader(conn).ReadString('\r\n')
+	message, err := bufio.NewReader(conn).ReadString("\r\n")
 	if err != nil {
 		fmt.Println("Error reading from connection: ", err.Error())
 		os.Exit(1)
