@@ -53,7 +53,7 @@ func main() {
 		for _, header := range headersArray {
 			if strings.Contains(header, "User-Agent") {
 				userAgent := strings.Split(header, ": ")[1]
-				response := fmt.Sprint("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(userAgent), userAgent)
+				response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(userAgent), userAgent)
 				fmt.Println(response)
 				fmt.Println(userAgent)
 
