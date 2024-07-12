@@ -31,11 +31,12 @@ func main() {
 		os.Exit(1)
 	}
 	readBuffer := make([]byte, 1024)
-	message, err := bufio.NewReader(conn).Read(readBuffer)
+	int_message, err := bufio.NewReader(conn).Read(readBuffer)
 	if err != nil {
 		fmt.Println("Error reading from connection: ", err.Error())
 		os.Exit(1)
 	}
+	message := string(readBuffer[:int_message])
 	fmt.Println("Message received: ", message)
 	fmt.Println(readBuffer)
 
