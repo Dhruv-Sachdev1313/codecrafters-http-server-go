@@ -42,7 +42,7 @@ func main() {
 	if path[0:6] == "/echo/" {
 		str := path[6:]
 		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
-		fmt.println(response)
+		fmt.Println(response)
 
 		returnResponse(conn, response)
 	} else {
