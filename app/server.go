@@ -42,7 +42,7 @@ func main() {
 	if path[0:6] == "/echo/" {
 		str := path[6:]
 
-		returnResponse(conn, "HTTP/1.1 200 OK\r\n\r\n"+str)
+		returnResponse(conn, "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 3\r\n\r\n"+str)
 	} else {
 		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
 	}
