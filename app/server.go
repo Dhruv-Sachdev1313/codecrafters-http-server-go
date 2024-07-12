@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func returnResponse(conn net.Conn, message string){
+func returnResponse(conn net.Conn, message string) {
 	_, err = conn.Write([]byte(message))
 	if err != nil {
 		fmt.Println("Error writing to connection: ", err.Error())
@@ -37,12 +37,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	path:=strings.Split(message," ")[1]
+	path := strings.Split(message, " ")[1]
 
-	if path=="/"{
+	if path == "/" {
 		returnResponse(conn, "HTTP/1.1 200 OK\r\n\r\n")
-	}
-	else{
+	} else {
 		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
 	}
 
