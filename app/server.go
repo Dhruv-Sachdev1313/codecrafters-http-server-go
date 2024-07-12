@@ -9,7 +9,7 @@ import (
 )
 
 func returnResponse(conn net.Conn, message string) {
-	_, err = conn.Write([]byte(message))
+	_, err := conn.Write([]byte(message))
 	if err != nil {
 		fmt.Println("Error writing to connection: ", err.Error())
 		os.Exit(1)
