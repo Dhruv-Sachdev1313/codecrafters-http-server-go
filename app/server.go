@@ -39,7 +39,7 @@ func main() {
 
 	path := strings.Split(message, " ")[1]
 
-	if path[0:6] == "/echo/" {
+	if (path[0:6] == "/echo/") && (len(path) > 6) {
 		str := path[6:]
 		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
 		fmt.Println(response)
