@@ -39,8 +39,10 @@ func main() {
 
 	path := strings.Split(message, " ")[1]
 
-	if path == "/" {
-		returnResponse(conn, "HTTP/1.1 200 OK\r\n\r\n")
+	if path[0:6] == "/echo/" {
+		str := path[6:]
+
+		returnResponse(conn, "HTTP/1.1 200 OK\r\n\r\n"+str)
 	} else {
 		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
 	}
