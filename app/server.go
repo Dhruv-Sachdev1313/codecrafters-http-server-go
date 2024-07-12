@@ -36,6 +36,7 @@ func main() {
 		fmt.Println("Error reading from connection: ", err.Error())
 		os.Exit(1)
 	}
+	fmt.Println("Message received: ", message)
 
 	path := strings.Split(message, " ")[1]
 	if path == "/" {
@@ -46,6 +47,8 @@ func main() {
 		fmt.Println(response)
 
 		returnResponse(conn, response)
+	} else if path == "/user-agent" {
+
 	} else {
 		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
 	}
