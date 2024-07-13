@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flags"
 	"fmt"
 	"net"
 	"os"
@@ -16,7 +17,7 @@ func returnResponse(conn net.Conn, message string) {
 	}
 }
 
-func handleTCPRequest(conn net.Conn) {
+func handleTCPRequest(conn net.Conn, dir string) {
 	defer conn.Close()
 	readBuffer := make([]byte, 1024)
 	int_message, err := bufio.NewReader(conn).Read(readBuffer)
@@ -47,7 +48,7 @@ func handleTCPRequest(conn net.Conn) {
 	} else if strings.HasPrefix(path, "/files") {
 		filename := strings.Split(path, "/")[2]
 		fmt.Println("Filename: ", filename)
-		file, err := os.Open("/tmp/" + filename)
+		file, err := os.Open(dir + filename)
 		if err != nil {
 			fmt.Println("Error opening file: ", err.Error())
 			response := "HTTP/1.1 404 Not Found\r\n\r\n"
@@ -72,6 +73,8 @@ func handleTCPRequest(conn net.Conn) {
 func main() {
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
 	fmt.Println("Logs from your program will appear here!")
+	var dir string
+	flags.StringVar(&dir, "directory")
 
 	l, err := net.Listen("tcp", "0.0.0.0:4221")
 	if err != nil {
@@ -85,7 +88,7 @@ func main() {
 			fmt.Println("Error accepting connection: ", err.Error())
 			os.Exit(1)
 		}
-		go handleTCPRequest(conn)
+		go handleTCPRequest(conn, dir)
 	}
 
 }
