@@ -47,6 +47,7 @@ func handleTCPRequest(conn net.Conn, dir string) {
 		}
 	} else if strings.HasPrefix(path, "/files") {
 		filename := strings.Split(path, "/")[2]
+		fmt.Println("dir: ", dir)
 		fmt.Println("Filename: ", filename)
 		file, err := os.Open(dir + filename)
 		if err != nil {
