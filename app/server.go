@@ -27,7 +27,6 @@ func handleTCPRequest(conn net.Conn) {
 	message := string(readBuffer[:int_message])
 
 	path := strings.Split(message, " ")[1]
-	fmt.Println("Path: ", path)
 	if path == "/" {
 		returnResponse(conn, "HTTP/1.1 200 OK\r\n\r\n")
 	} else if (len(path) > 6) && (path[0:6] == "/echo/") {
@@ -47,6 +46,7 @@ func handleTCPRequest(conn net.Conn) {
 		}
 	} else if strings.HasPrefix(path, "/files") {
 		filename := strings.Split(path, "/")[2]
+		fmt.Println("Filename: ", filename)
 		file, err := os.Open(filename)
 		if err != nil {
 			response := "HTTP/1.1 404 Not Found\r\n\r\n"
