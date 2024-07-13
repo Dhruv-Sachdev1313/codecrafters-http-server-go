@@ -27,12 +27,12 @@ func handleTCPRequest(conn net.Conn) {
 	message := string(readBuffer[:int_message])
 
 	path := strings.Split(message, " ")[1]
+	fmt.Println("Path: ", path)
 	if path == "/" {
 		returnResponse(conn, "HTTP/1.1 200 OK\r\n\r\n")
 	} else if (len(path) > 6) && (path[0:6] == "/echo/") {
 		str := path[6:]
 		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
-		fmt.Println(response)
 
 		returnResponse(conn, response)
 	} else if path == "/user-agent" {
@@ -41,12 +41,12 @@ func handleTCPRequest(conn net.Conn) {
 			if strings.Contains(header, "User-Agent") {
 				userAgent := strings.Split(header, ": ")[1]
 				response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(userAgent), userAgent)
-				fmt.Println(response)
-				fmt.Println(userAgent)
 
 				returnResponse(conn, response)
 			}
 		}
+	} else if path == "/files" {
+
 	} else {
 		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
 	}
