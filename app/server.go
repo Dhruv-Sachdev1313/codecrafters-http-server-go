@@ -45,8 +45,23 @@ func handleTCPRequest(conn net.Conn) {
 				returnResponse(conn, response)
 			}
 		}
-	} else if path == "/files" {
+	} else if strings.HasPrefix(path, "/files") {
+		filename := strings.Split(path, "/")[2]
+		file, err := os.Open(filename)
+		if err != nil {
+			response := "HTTP/1.1 404 Not Found\r\n\r\n"
+			returnResponse(conn, response)
+		}
+		defer file.Close()
+		fileContentArray := make([]byte, 1024)
 
+		fileDataLength, err := file.Read(fileContentArray)
+		if err != nil {
+			response := "HTTP/1.1 500 Internal Server Error\r\n\r\n"
+			returnResponse(conn, response)
+		}
+		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %d\r\n\r\n%s", fileDataLength, string(fileContentArray[:fileDataLength]))
+		returnResponse(conn, response)
 	} else {
 		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
 	}
