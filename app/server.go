@@ -2,7 +2,7 @@ package main
 
 import (
 	"bufio"
-	"flags"
+	"flag"
 	"fmt"
 	"net"
 	"os"
@@ -74,7 +74,7 @@ func main() {
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
 	fmt.Println("Logs from your program will appear here!")
 	var dir string
-	flags.StringVar(&dir, "directory")
+	flag.StringVar(&dir, "directory")
 
 	l, err := net.Listen("tcp", "0.0.0.0:4221")
 	if err != nil {
