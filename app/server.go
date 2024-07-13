@@ -47,7 +47,7 @@ func handleTCPRequest(conn net.Conn) {
 	} else if strings.HasPrefix(path, "/files") {
 		filename := strings.Split(path, "/")[2]
 		fmt.Println("Filename: ", filename)
-		file, err := os.Open("/tmp" + filename)
+		file, err := os.Open("/tmp/" + filename)
 		if err != nil {
 			fmt.Println("Error opening file: ", err.Error())
 			response := "HTTP/1.1 404 Not Found\r\n\r\n"
