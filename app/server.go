@@ -49,6 +49,7 @@ func handleTCPRequest(conn net.Conn) {
 		fmt.Println("Filename: ", filename)
 		file, err := os.Open(filename)
 		if err != nil {
+			fmt.Println("Error opening file: ", err.Error())
 			response := "HTTP/1.1 404 Not Found\r\n\r\n"
 			returnResponse(conn, response)
 		}
