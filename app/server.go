@@ -46,6 +46,9 @@ func handleTCPRequest(conn net.Conn, dir string) {
 			if strings.Contains(encodingType, "gzip") {
 				response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
 				returnResponse(conn, response)
+			} else {
+				response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
+				returnResponse(conn, response)
 			}
 		} else {
 			response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
