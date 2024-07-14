@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -27,7 +28,9 @@ func handleTCPRequest(conn net.Conn, dir string) {
 	}
 	message := string(readBuffer[:int_message])
 
-	path := strings.Split(message, " ")[1]
+	splitMessage := strings.Split(message, " ")
+	requestType := splitMessage[0]
+	path := splitMessage[1]
 	if path == "/" {
 		returnResponse(conn, "HTTP/1.1 200 OK\r\n\r\n")
 	} else if (len(path) > 6) && (path[0:6] == "/echo/") {
@@ -46,25 +49,57 @@ func handleTCPRequest(conn net.Conn, dir string) {
 			}
 		}
 	} else if strings.HasPrefix(path, "/files") {
-		filename := strings.Split(path, "/")[2]
-		fmt.Println("dir: ", dir)
-		fmt.Println("Filename: ", filename)
-		file, err := os.Open(dir + filename)
-		if err != nil {
-			fmt.Println("Error opening file: ", err.Error())
-			response := "HTTP/1.1 404 Not Found\r\n\r\n"
-			returnResponse(conn, response)
-		}
-		defer file.Close()
-		fileContentArray := make([]byte, 1024)
+		if requestType == "GET" {
+			filename := strings.Split(path, "/")[2]
+			file, err := os.Open(dir + filename)
+			if err != nil {
+				fmt.Println("Error opening file: ", err.Error())
+				response := "HTTP/1.1 404 Not Found\r\n\r\n"
+				returnResponse(conn, response)
+			}
+			defer file.Close()
+			fileContentArray := make([]byte, 1024)
 
-		fileDataLength, err := file.Read(fileContentArray)
-		if err != nil {
-			response := "HTTP/1.1 500 Internal Server Error\r\n\r\n"
+			fileDataLength, err := file.Read(fileContentArray)
+			if err != nil {
+				response := "HTTP/1.1 500 Internal Server Error\r\n\r\n"
+				returnResponse(conn, response)
+			}
+			response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %d\r\n\r\n%s", fileDataLength, string(fileContentArray[:fileDataLength]))
+			returnResponse(conn, response)
+		} else if requestType == "POST" {
+			filename := strings.Split(path, "/")[2]
+			file, err := os.Create(dir + filename)
+			if err != nil {
+				response := "HTTP/1.1 500 Internal Server Error\r\n\r\n"
+				returnResponse(conn, response)
+			}
+			defer file.Close()
+			headersArray := strings.Split(strings.Split(message, "\r\n\r\n")[0], "\r\n")[1:]
+			reponseBody := strings.Split(message, "\r\n\r\n")[1]
+			var contentLength int
+			for _, header := range headersArray {
+				if strings.Contains(header, "Content-Length") {
+					contentLength, err = strconv.Atoi(strings.Split(header, ": ")[1])
+					if err != nil {
+						response := "HTTP/1.1 500 Internal Server Error\r\n\r\n"
+						returnResponse(conn, response)
+					}
+				}
+			}
+			responseArray := []byte(reponseBody)
+			if len(responseArray) != contentLength {
+				response := "HTTP/1.1 500 Internal Server Error\r\n\r\n"
+				returnResponse(conn, response)
+			}
+			_, err = file.Write(responseArray)
+			if err != nil {
+				response := "HTTP/1.1 500 Internal Server Error\r\n\r\n"
+				returnResponse(conn, response)
+			}
+			response := "HTTP/1.1 201 Created\r\n\r\n"
 			returnResponse(conn, response)
 		}
-		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %d\r\n\r\n%s", fileDataLength, string(fileContentArray[:fileDataLength]))
-		returnResponse(conn, response)
 	} else {
 		returnResponse(conn, "HTTP/1.1 404 Not Found\r\n\r\n")
 	}
@@ -77,7 +112,6 @@ func main() {
 	var dir string
 	flag.StringVar(&dir, "directory", "", "Directory to serve files from")
 	flag.Parse()
-	fmt.Println("Directory: ", dir)
 
 	l, err := net.Listen("tcp", "0.0.0.0:4221")
 	if err != nil {
