@@ -35,9 +35,23 @@ func handleTCPRequest(conn net.Conn, dir string) {
 		returnResponse(conn, "HTTP/1.1 200 OK\r\n\r\n")
 	} else if (len(path) > 6) && (path[0:6] == "/echo/") {
 		str := path[6:]
-		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
+		headerArray := strings.Split(strings.Split(message, "\r\n\r\n")[0], "\r\n")[1:]
+		encodingType := ""
+		for _, header := range headerArray {
+			if strings.Contains(header, "Accept-Encoding") {
+				encodingType = strings.Split(header, ": ")[1]
+			}
+		}
+		if encodingType != "" {
+			if strings.Contains(encodingType, "gzip") {
+				response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
+				returnResponse(conn, response)
+			}
+		} else {
+			response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
+			returnResponse(conn, response)
+		}
 
-		returnResponse(conn, response)
 	} else if path == "/user-agent" {
 		headersArray := strings.Split(strings.Split(message, "\r\n\r\n")[0], "\r\n")[1:]
 		for _, header := range headersArray {
