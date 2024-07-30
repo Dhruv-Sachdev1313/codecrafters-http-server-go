@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"bytes"
+	"compress/gzip"
 	"flag"
 	"fmt"
 	"net"
@@ -16,6 +18,20 @@ func returnResponse(conn net.Conn, message string) {
 		fmt.Println("Error writing to connection: ", err.Error())
 		os.Exit(1)
 	}
+}
+
+func gzipEncode(str string) []byte {
+	var b bytes.Buffer
+	gz := gzip.NewWriter(&b)
+	if _, err := gz.Write([]byte(str)); err != nil {
+		fmt.Println("Error writing to gzip: ", err.Error())
+		os.Exit(1)
+	}
+	if err := gz.Close(); err != nil {
+		fmt.Println("Error closing gzip: ", err.Error())
+		os.Exit(1)
+	}
+	return b.Bytes()
 }
 
 func handleTCPRequest(conn net.Conn, dir string) {
@@ -44,7 +60,9 @@ func handleTCPRequest(conn net.Conn, dir string) {
 		}
 		if encodingType != "" {
 			if strings.Contains(encodingType, "gzip") {
-				response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
+				zipedStr := gzipEncode(str)
+				response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Encoding: gzip\r\nContent-Length: %d\r\n\r\n%s", len(zipedStr), zipedStr)
+
 				returnResponse(conn, response)
 			} else {
 				response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(str), str)
